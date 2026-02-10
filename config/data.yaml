@@ -1,0 +1,10 @@
+# Modifiez la ligne 'path' avec le chemin exact que vous voyez sur votre Mac
+# Astuce : Dans le Finder, faites Clic Droit sur le dossier "dataset" > "Copier en tant que chemin d'accès" (ou option+clic droit)
+
+path: /Users/davidlitvak/Desktop/Aivancity/3_Annee/Projet Aztec/data/raw/source_images_bmp
+train: images/train  # (ou juste train, selon comment est fait votre dossier dataset)
+val: images/val      # (ou juste val)
+
+# Le reste (names, nc) ne change pas
+names:
+  0: ...
