@@ -1,0 +1,21 @@
+# Ignore Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+
+# Ignore heavy ML models to comply with GitHub file constraints
+runs/
+*.pt
+clf_models/
+
+# Ignore big datasets
+data/
+test_images/
+
+# IDE & OS files
+.idea/
+.DS_Store
+.vscode/
