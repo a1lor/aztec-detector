@@ -1,10 +1,17 @@
-# Modifiez la ligne 'path' avec le chemin exact que vous voyez sur votre Mac
-# Astuce : Dans le Finder, faites Clic Droit sur le dossier "dataset" > "Copier en tant que chemin d'accès" (ou option+clic droit)
+# Dataset config - chemin absolu vers le dataset traité
+# Sur Mac local:
+#   path: /Users/davidlitvak/Desktop/Aivancity/3_Annee/aztec-detector/data/processed /dataset
+# Sur le serveur (à modifier selon l'emplacement du repo):
+#   path: /home/user/aztec-detector/data/processed_dataset
 
-path: /Users/davidlitvak/Desktop/Aivancity/3_Annee/Projet Aztec/data/raw/source_images_bmp
-train: images/train  # (ou juste train, selon comment est fait votre dossier dataset)
-val: images/val      # (ou juste val)
+path: /Users/davidlitvak/Desktop/Aivancity/3_Annee/aztec-detector/data/processed /dataset
+train: images/train
+val: images/val
+test: images/test
 
-# Le reste (names, nc) ne change pas
+nc: 4
 names:
-  0: ...
+  0: cacahuatl
+  1: teocomitl
+  2: tepetla
+  3: tlapexohuiloni
