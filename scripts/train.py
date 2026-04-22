@@ -126,9 +126,15 @@ def main():
     print(f"Precision  : {metrics.seg.mp:.4f}")
     print(f"Recall     : {metrics.seg.mr:.4f}")
 
-    print(f"\n Sauvegarde obligatoire avant le 23/04 16h00 !")
-    print(f"Depuis ton PC :")
-    print(f"  scp -P 22 lab-7fb3bcfce5@10.94.11.10:{best.resolve()} .")
+    # Upload automatique vers Google Drive
+    try:
+        from upload_drive import upload
+        print("\nUpload du modèle vers Google Drive...")
+        upload(best)
+    except Exception as e:
+        print(f"\nUpload Drive échoué ({e})")
+        print(f"Sauvegarde manuelle :")
+        print(f"  scp -P 22 lab-7fb3bcfce5@10.94.11.10:{best.resolve()} .")
 
 
 if __name__ == "__main__":
