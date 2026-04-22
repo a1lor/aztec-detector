@@ -25,7 +25,8 @@ class MetricsLogger:
             "timestamp": datetime.now().isoformat(),
         }
         if hasattr(trainer, "loss") and trainer.loss is not None:
-            vals = trainer.loss.detach().cpu().tolist()
+            t = trainer.loss.detach().cpu()
+            vals = t.tolist() if t.dim() > 0 else [float(t)]
             entry.update(dict(zip(["box", "seg", "cls", "dfl"], [round(v, 4) for v in vals])))
         self.history.append(entry)
         self.path.write_text(json.dumps({
