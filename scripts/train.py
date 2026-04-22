@@ -127,9 +127,10 @@ def main():
     print(f"Precision  : {metrics.seg.mp:.4f}")
     print(f"Recall     : {metrics.seg.mr:.4f}")
 
-    # Upload automatique via transfer.sh
+    # Upload automatique via transfer.sh + notification téléphone
+    import subprocess
+    NTFY_TOPIC = "aztec-imran-66832"
     try:
-        import subprocess
         print("\nUpload du modèle vers transfer.sh...")
         result = subprocess.run(
             ["curl", "--upload-file", str(best), "https://transfer.sh/best.pt"],
@@ -140,12 +141,21 @@ def main():
             print(f"\n*** LIEN DE TELECHARGEMENT (valable 14 jours) ***")
             print(f"  {url}")
             Path("runs/download_link.txt").write_text(url)
-            print(f"  (aussi sauvegardé dans runs/download_link.txt)")
+            # Notification téléphone
+            subprocess.run([
+                "curl", "-s", "-d", f"Entrainement termine! Telecharge best.pt ici: {url}",
+                f"https://ntfy.sh/{NTFY_TOPIC}"
+            ], timeout=15)
+            print("Notification envoyée sur ton téléphone !")
         else:
             raise RuntimeError(result.stderr)
     except Exception as e:
         print(f"\nUpload échoué ({e})")
-        print(f"Récupère le modèle manuellement depuis le réseau école :")
+        subprocess.run([
+            "curl", "-s", "-d",
+            f"Entrainement termine mais upload echoue. Connecte-toi a l'ecole pour recuperer best.pt",
+            f"https://ntfy.sh/{NTFY_TOPIC}"
+        ], timeout=15)
         print(f"  scp -P 22 lab-7fb3bcfce5@10.94.11.10:{best.resolve()} .")
 
 
