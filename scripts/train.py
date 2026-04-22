@@ -126,14 +126,25 @@ def main():
     print(f"Precision  : {metrics.seg.mp:.4f}")
     print(f"Recall     : {metrics.seg.mr:.4f}")
 
-    # Upload automatique vers Google Drive
+    # Upload automatique via transfer.sh
     try:
-        from upload_drive import upload
-        print("\nUpload du modèle vers Google Drive...")
-        upload(best)
+        import subprocess
+        print("\nUpload du modèle vers transfer.sh...")
+        result = subprocess.run(
+            ["curl", "--upload-file", str(best), "https://transfer.sh/best.pt"],
+            capture_output=True, text=True, timeout=120
+        )
+        if result.returncode == 0:
+            url = result.stdout.strip()
+            print(f"\n*** LIEN DE TELECHARGEMENT (valable 14 jours) ***")
+            print(f"  {url}")
+            Path("runs/download_link.txt").write_text(url)
+            print(f"  (aussi sauvegardé dans runs/download_link.txt)")
+        else:
+            raise RuntimeError(result.stderr)
     except Exception as e:
-        print(f"\nUpload Drive échoué ({e})")
-        print(f"Sauvegarde manuelle :")
+        print(f"\nUpload échoué ({e})")
+        print(f"Récupère le modèle manuellement depuis le réseau école :")
         print(f"  scp -P 22 lab-7fb3bcfce5@10.94.11.10:{best.resolve()} .")
 
 
