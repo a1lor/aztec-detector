@@ -127,23 +127,30 @@ def main():
     print(f"Precision  : {metrics.seg.mp:.4f}")
     print(f"Recall     : {metrics.seg.mr:.4f}")
 
-    # Upload automatique via transfer.sh + notification téléphone
-    import subprocess
+    # Zip des résultats complets + upload transfer.sh + notification téléphone
+    import subprocess, shutil
     NTFY_TOPIC = "aztec-imran-66832"
+    results_dir = Path(f"runs/segment/{args.name}")
+    zip_path    = Path("runs/seg_train_results")
     try:
-        print("\nUpload du modèle vers transfer.sh...")
+        print("\nCompression des résultats...")
+        shutil.make_archive(str(zip_path), "zip", results_dir.parent, results_dir.name)
+        zip_file = Path(str(zip_path) + ".zip")
+
+        print("Upload vers transfer.sh...")
         result = subprocess.run(
-            ["curl", "--upload-file", str(best), "https://transfer.sh/best.pt"],
-            capture_output=True, text=True, timeout=120
+            ["curl", "--upload-file", str(zip_file), "https://transfer.sh/seg_train_results.zip"],
+            capture_output=True, text=True, timeout=300
         )
         if result.returncode == 0:
             url = result.stdout.strip()
             print(f"\n*** LIEN DE TELECHARGEMENT (valable 14 jours) ***")
             print(f"  {url}")
+            print(f"  Contient : best.pt, results.csv, courbes, confusion matrix")
             Path("runs/download_link.txt").write_text(url)
-            # Notification téléphone
             subprocess.run([
-                "curl", "-s", "-d", f"Entrainement termine! Telecharge best.pt ici: {url}",
+                "curl", "-s", "-d",
+                f"Entrainement termine! Telecharge resultats + best.pt ici: {url}",
                 f"https://ntfy.sh/{NTFY_TOPIC}"
             ], timeout=15)
             print("Notification envoyée sur ton téléphone !")
@@ -153,10 +160,10 @@ def main():
         print(f"\nUpload échoué ({e})")
         subprocess.run([
             "curl", "-s", "-d",
-            f"Entrainement termine mais upload echoue. Connecte-toi a l'ecole pour recuperer best.pt",
+            f"Entrainement termine mais upload echoue. Connecte-toi a l'ecole pour recuperer les resultats.",
             f"https://ntfy.sh/{NTFY_TOPIC}"
         ], timeout=15)
-        print(f"  scp -P 22 lab-7fb3bcfce5@10.94.11.10:{best.resolve()} .")
+        print(f"  scp -P 22 lab-7fb3bcfce5@10.94.11.10:{results_dir.resolve()} .")
 
 
 if __name__ == "__main__":
